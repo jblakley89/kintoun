@@ -1,5 +1,9 @@
 (function($){
     var canvas = document.getElementById("canvas");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var screenMultX = canvas.width / 800;
+    var screenMultY = canvas.height / 480;
     var ctx = canvas.getContext("2d");
     ctx.font = "15pt Arial";
     var player = {};
@@ -8,8 +12,9 @@
     var score = 0;
     var paused = false;
     var play = true;
-    var sound = true;
+    var sound = false;
     var difficulty = 0;
+    var debug = true;
     
     var requestAnimFrame = (function(){
         return  window.requestAnimationFrame        ||
@@ -26,9 +31,7 @@
         
         //image dictionary
         this.imgs = {
-            'bg'            : 'img/static_sky_1.png',
             'clouds'        : 'img/combined_sky.jpg',
-            'ePterodactyl'  : 'img/enemy_pterodactyl.png',
         };
 
         var assetsLoaded = 0;
@@ -82,16 +85,18 @@
 
     var background = (function(){
         var clouds = {};
+        var cloudsImg = new Image();
+        cloudsImg.src = assetLoader.imgs.clouds;
 
         this.draw = function(){
-            ctx.drawImage(assetLoader.imgs.bg,0,0);
             
             //pan background
             clouds.x -= clouds.speed;
             
             //draw images in loop
-            ctx.drawImage(assetLoader.imgs.clouds, clouds.x, clouds.y);
-            ctx.drawImage(assetLoader.imgs.clouds, clouds.x + canvas.width, clouds.y);
+            ctx.drawImage(cloudsImg, clouds.x, clouds.y,canvas.width,canvas.height);
+            ctx.drawImage(cloudsImg, clouds.x + canvas.width, clouds.y,
+                        canvas.width,canvas.height);
 
             //reset when scrolled
             if(clouds.x + assetLoader.imgs.clouds.width <= 0){
@@ -151,13 +156,16 @@
                 spritesheet.frameWidth,
                 spritesheet.frameHeight,
                 x,y,
-                spritesheet.frameWidth,
-                spritesheet.frameHeight
+                spritesheet.frameWidth * screenMultX,
+                spritesheet.frameHeight * screenMultY
             );
 
             //Draws Bounded Boxes for debugging
-            //ctx.rect(x,y,spritesheet.frameWidth,spritesheet.frameHeight);
-            //ctx.stroke();
+            if(debug){
+                ctx.rect(x,y,spritesheet.frameWidth * screenMultX,
+                            spritesheet.frameHeight * screenMultY);
+                ctx.stroke();
+            }
         };
     }
 
@@ -221,6 +229,10 @@
             e.posY = canvas.height - e.height;
         }
 
+        //scales size
+        e.widthM  = e.width * screenMultX;
+        e.heightM = e.height * screenMultY;
+
         calculateMovement(e, (-e.width - 5), e.posY);
 
         return e;
@@ -228,16 +240,18 @@
 
     function createPlayer(){
         // setup the player
-        player.width  = 45;
-        player.height = 54;
-        player.speed = 4;
-        player.posX   = 60;
-        player.posY   = 250;
-        player.dX     = 0;
-        player.dY     = 0;
-        player.moves  = 0;
-        player.sheet  = new SpriteSheet("img/kinto_un_3.png", player.width, player.height);
-        player.anim   = new Animation(player.sheet, 10, 0, 2);
+        player.width   = 45;
+        player.widthM  = player.width * screenMultX;
+        player.height  = 54;
+        player.heightM = player.height * screenMultY;
+        player.speed   = 4;
+        player.posX    = 60;
+        player.posY    = 250;
+        player.dX      = 0;
+        player.dY      = 0;
+        player.moves   = 0;
+        player.sheet   = new SpriteSheet("img/kinto_un_3.png", player.width, player.height);
+        player.anim    = new Animation(player.sheet, 10, 0, 2);
 
     }
 
@@ -321,17 +335,17 @@
 
         if( 
             ((
-             (player.posX + player.width  * PRC_2) > (enemy.posX + enemy.width  * PRC_1) &&
-             (player.posX + player.width  * PRC_1) < (enemy.posX + enemy.width  * PRC_2)
+             (player.posX + player.widthM  * PRC_2) > (enemy.posX + enemy.widthM  * PRC_1) &&
+             (player.posX + player.widthM  * PRC_1) < (enemy.posX + enemy.widthM  * PRC_2)
             )&&(
-             (player.posY + player.height) > enemy.posY && 
-              player.posY < (enemy.posY + enemy.height)
+             (player.posY + player.heightM) > enemy.posY && 
+              player.posY < (enemy.posY + enemy.heightM)
             ))||((
-             (player.posY + player.height * PRC_1) < (enemy.posY + enemy.height * PRC_2) &&
-             (player.posY + player.height * PRC_2) > (enemy.posY + enemy.height * PRC_1)
+             (player.posY + player.heightM * PRC_1) < (enemy.posY + enemy.heightM * PRC_2) &&
+             (player.posY + player.heightM * PRC_2) > (enemy.posY + enemy.heightM * PRC_1)
             )&&(
-             (player.posX + player.width) > enemy.posX &&
-              player.posX < (enemy.posX + enemy.width)
+             (player.posX + player.widthM) > enemy.posX &&
+              player.posX < (enemy.posX + enemy.widthM)
             ))
         ){
             gameOver();
@@ -394,7 +408,7 @@
         }
     }
 
-    canvas.onclick = function(e){
+    canvas.onmousedown = function(e){
         calculateMovement(
             player, 
             e.pageX - (player.width/2), 
