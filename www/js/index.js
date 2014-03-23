@@ -14,7 +14,7 @@
     var play = true;
     var sound = false;
     var difficulty = 0;
-    var debug = true;
+    var debug = false;
     
     var requestAnimFrame = (function(){
         return  window.requestAnimationFrame        ||
@@ -171,7 +171,7 @@
 
     function enemy(y, type){
         var e = this;
-        e.posX = canvas.width + 90;
+        e.posX = canvas.width + 100 * screenMultX;
         e.posY      = y;
         e.dX        = 0;
         e.dY        = 0;
