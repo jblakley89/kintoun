@@ -12,16 +12,9 @@
     var score,play,difficulty;
     var paused = false;
     var sound = true;
-    var debug = true;
+    var debug = false;
     var volume = 1;
-
-    var scoreBoard = { posX: canvas.width - 150, 
-                                posY: 0,
-                                width: 150,
-                                height: 30,
-                                widthM: canvas.width * screenMultX,
-                                heightM: 30 * screenMultY
-    };
+    var scoreBoard = {};
     
     var requestAnimFrame = (function(){
         return  window.requestAnimationFrame        ||
@@ -257,6 +250,15 @@
         return e;
     }
 
+    function createScoreBoard(){
+        scoreBoard.posX = canvas.width - 150;
+        scoreBoard.posY = 0;
+        scoreBoard.width = 150;
+        scoreBoard.height = 30;
+        scoreBoard.widthM = scoreBoard.width * screenMultX;
+        scoreBoard.heightM = scoreBoard.height * screenMultY;
+    }
+
     function createPlayer(){
         // setup the player
         player.width   = 45;
@@ -331,9 +333,9 @@
         ctx.clearRect(canvas.width - 150, 0, 150, 30);
         ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
         background.fillHole(player);
-        alert("player hole filled");
+        //alert("player hole filled");
         background.fillHole(scoreBoard);
-        alert("scoreBoard hole filled"); 
+        //alert("scoreBoard hole filled"); 
 
         for(var i in enemies){
             var e = enemies[i];
@@ -385,6 +387,7 @@
 
     function startGame() {
         createPlayer();
+        createScoreBoard();
         background.reset();
         play = true;
         score = 0;
@@ -411,7 +414,7 @@
         if(play){
             requestAnimFrame( animate );
             clearSpriteArea();
-            alert("cleared sprites");
+            //alert("cleared sprites");
             if(debug){ ctx.beginPath(); }
             //background.draw();
 
