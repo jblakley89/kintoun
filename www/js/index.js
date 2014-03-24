@@ -331,7 +331,9 @@
         ctx.clearRect(canvas.width - 150, 0, 150, 30);
         ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
         background.fillHole(player);
-        background.fillHole(scoreBoard); 
+        alert("player hole filled");
+        background.fillHole(scoreBoard);
+        alert("scoreBoard hole filled"); 
 
         for(var i in enemies){
             var e = enemies[i];
