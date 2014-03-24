@@ -263,7 +263,7 @@
         player.moves   = 0;
         player.sheet   = new SpriteSheet("img/kinto_un_3.png", player.width, player.height);
         player.anim    = new Animation(player.sheet, 10, 0, 2);
-
+        updatePlayer();
     }
 
     function updatePlayer(){
