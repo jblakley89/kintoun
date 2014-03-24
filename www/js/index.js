@@ -110,14 +110,14 @@
         
         this.fillHole = function(sprite){
             ctx.drawImage(  cloudsImg,
-                            (sprite.posX / screenMultX) - 1, 
-                            (sprite.posY / screenMultY) - 1,
-                            sprite.width  + 2,
-                            sprite.height + 2,
+                            (sprite.posX / screenMultX),// - 1, 
+                            (sprite.posY / screenMultY),// - 1,
+                            sprite.width,//  + 2,
+                            sprite.height,// + 2,
                             sprite.posX - screenMultX,
                             sprite.posY - screenMultY,
-                            sprite.widthM  + (2 * screenMultX),
-                            sprite.heightM + (2 * screenMultX)
+                            sprite.widthM  + (1 * screenMultX),
+                            sprite.heightM + (1 * screenMultX)
                          );
         };
 
@@ -158,9 +158,10 @@
         };
 
         this.draw = function(x,y){
+            //var 
             var row = Math.floor(animationSequence[currentFrame] / spritesheet.framesPerRow);
             var col = Math.floor(animationSequence[currentFrame] % spritesheet.framesPerRow);
-
+            
             ctx.drawImage(
                 spritesheet.image,
                 col * spritesheet.frameWidth,
@@ -334,13 +335,13 @@
         ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
         background.fillHole(player);
         //alert("player hole filled");
-        //background.fillHole(scoreBoard);
+        background.fillHole(scoreBoard);
         //alert("scoreBoard hole filled"); 
 
         for(var i in enemies){
             var e = enemies[i];
             ctx.clearRect(e.posX, e.posY, e.widthM, e.heightM);
-            background.fillHole(e);
+            //background.fillHole(e);
         }
     }
 
