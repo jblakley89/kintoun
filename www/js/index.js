@@ -62,7 +62,7 @@
                         this.sounds[sound].src = src;
                     }else{
                         this.sounds[sound] = new Audio();
-                        this.sounds[sound].src = "/android_asset/www/" + src;
+                        this.sounds[sound].src =  src;
                     }
                     this.sounds[sound].volume = volume;
                 }
@@ -90,24 +90,38 @@
             
             //draw images in loop
             ctx.drawImage(cloudsImg, clouds.x, clouds.y,canvas.width,canvas.height);
-            ctx.drawImage(cloudsImg, clouds.x + canvas.width, clouds.y,
-                        canvas.width,canvas.height);
+           // ctx.drawImage(cloudsImg, clouds.x + canvas.width, clouds.y,
+           //             canvas.width,canvas.height);
 
-            //reset when scrolled
-            if(clouds.x + assetLoader.imgs.clouds.width <= 0){
-                clouds.x = 0;
-            }
+           //reset when scrolled
+           // if(clouds.x + assetLoader.imgs.clouds.width <= 0){
+           //     clouds.x = 0;
+           // }
         };
 
         this.reset = function(){
             clouds.x = 0;
             clouds.y = 0;
-            clouds.speed = 0.2
+            clouds.speed = 0;
+        };
+        
+        this.fillHole = function(sprite){
+            ctx.drawImage(  cloudsImg,
+                            (sprite.posX / screenMultX) - 1, 
+                            (sprite.posY / screenMultY) - 1,
+                            sprite.width  + 2,
+                            sprite.height + 2,
+                            sprite.posX - screenMultX,
+                            sprite.posY - screenMultY,
+                            sprite.widthM  + (2 * screenMultX),
+                            sprite.heightM + (2 * screenMultX)
+                         );
         };
 
         return {
             draw: this.draw,
-            reset: this.reset
+            reset: this.reset,
+            fillHole: this.fillHole
         };
     })();
 
@@ -228,7 +242,7 @@
         e.widthM  = e.width * screenMultX;
         e.heightM = e.height * screenMultY;
 
-        calculateMovement(e, (-e.width - 5), e.posY);
+        calculateMovement(e, (-e.widthM - 5), e.posY);
 
         return e;
     }
@@ -257,14 +271,14 @@
             player.posX += player.dX;
             player.posY += player.dY;
             player.moves--;
-        }
-
+        } 
         player.anim.draw(
             (player.posX < (canvas.width - player.width)) ? 
                 player.posX : (canvas.width - player.width), 
             (player.posY < (canvas.height - player.height)) ?
                 player.posY : (canvas.height - player.height)
         );
+        
 
     }
 
@@ -303,6 +317,25 @@
         }
     }
 
+    function clearSpriteArea(){
+        ctx.clearRect(canvas.width - 150, 0, 150, 30);
+        ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
+        background.fillHole(player);
+        background.fillHole( { posX: canvas.width - 150, 
+                                posY: 0,
+                                width: 150,
+                                height: 30,
+                                widthM: canvas.width * screenMultX,
+                                heightM: 30 * screenMultY
+                            } ); 
+
+        for(var i in enemies){
+            var e = enemies[i];
+            ctx.clearRect(e.posX, e.posY, e.widthM, e.heightM);
+            background.fillHole(e);
+        }
+    }
+
     function calculateMovement(sprite,destX,destY){
         var p1 = { x: destX, y: destY };
         var p2 = { x: sprite.posX, y: sprite.posY };
@@ -317,13 +350,6 @@
     }
 
     function collisionCheck(enemy){
-        //if( 
-        //    player.posX < (enemy.posX + enemy.width)       && 
-        //    (player.posX + player.width) > enemy.posX      &&
-        //    player.posY < (enemy.posY + enemy.height)      &&
-        //    (player.posY + player.height) > enemy.posY
-        //){ }
-
         var PRC_1 = 0.3;       //Percent to round the corners on collision
         var PRC_2 = 1 - PRC_1;  //Secondary calc
         var SD    = -1;         //Standard Deviation try to smooth out errors
@@ -360,6 +386,7 @@
         enemies = [];
         assetLoader.sounds.start.play();
         assetLoader.sounds.music.play();
+        background.draw();
         animate();
     }
 
@@ -377,9 +404,9 @@
     function animate() {
         if(play){
             requestAnimFrame( animate );
-            ctx.clearRect(0,0,canvas.width, canvas.height);
-            ctx.beginPath();
-            background.draw();
+            clearSpriteArea();
+           // ctx.beginPath();
+            //background.draw();
 
             score++;
             ctx.fillText("Score: " + score,canvas.width-150,30);
