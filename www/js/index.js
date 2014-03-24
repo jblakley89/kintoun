@@ -340,7 +340,7 @@
         for(var i in enemies){
             var e = enemies[i];
             ctx.clearRect(e.posX, e.posY, e.widthM, e.heightM);
-            //background.fillHole(e);
+            background.fillHole(e);
         }
     }
 
