@@ -57,11 +57,11 @@
             for(var sound in this.sounds){
                 if(this.sounds.hasOwnProperty(sound)){
                     src = this.sounds[sound];
-                    if(typeof Audio != "undefined"){
-                        this.sounds[sound] = new Audio();
+                    if(typeof Media != "undefined"){
+                        this.sounds[sound] = new Media();
                         this.sounds[sound].src = src;
                     }else{
-                        this.sounds[sound] = new Media();
+                        this.sounds[sound] = new Audio();
                         this.sounds[sound].src = "/android_asset/www/" + src;
                     }
                     this.sounds[sound].volume = volume;
