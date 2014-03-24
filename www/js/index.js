@@ -48,7 +48,6 @@
                 if(this.imgs.hasOwnProperty(img)){
                     src = this.imgs[img];
                     this.imgs[img] = new Image();
-                    this.imgs[img].status = "loading";
                     this.imgs[img].name = img;
                     this.imgs[img].src = src;
                 }
@@ -58,10 +57,14 @@
             for(var sound in this.sounds){
                 if(this.sounds.hasOwnProperty(sound)){
                     src = this.sounds[sound];
-                    this.sounds[sound] = new Audio();
-                    this.sounds[sound].status = "loading";
+                    if(typeof Audio != "undefined"){
+                        this.sounds[sound] = new Audio();
+                        this.sounds[sound].src = src;
+                    }else{
+                        this.sounds[sound] = new Media();
+                        this.sounds[sound].src = "/android_asset/www/" + src;
+                    }
                     this.sounds[sound].volume = volume;
-                    this.sounds[sound].src = src;
                 }
             }
         };
