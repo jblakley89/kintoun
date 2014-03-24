@@ -9,12 +9,11 @@
     var player = {};
     var enemies = [];
     var items = [];
-    var score = 0;
+    var score,play,difficulty;
     var paused = false;
-    var play = true;
-    var sound = false;
-    var difficulty = 0;
+    var sound = true;
     var debug = false;
+    var volume = 1;
     
     var requestAnimFrame = (function(){
         return  window.requestAnimationFrame        ||
@@ -31,57 +30,50 @@
         
         //image dictionary
         this.imgs = {
-            'clouds'        : 'img/combined_sky.jpg',
+            'clouds'        : 'img/combined_sky.jpg'
         };
 
-        var assetsLoaded = 0;
-        var numImgs = Object.keys(this.imgs).length;
-        this.totalAssets = numImgs;
-
-        function assetLoaded(dic, name){
-            if(this[dic][name].status !== "loading"){
-                return;
-            }
-            this[dic][name].status = "loaded";
-            assetsLoaded++;
-
-            if(assetsLoaded === this.totalAssets && typeof this.finished === "function"){
-                this.finished();
-            }
-        }
+        //sound dictionary
+        this.sounds = {
+            'music'         : 'sound/music.mp3',
+            'start'         : 'sound/kintoun.wav',
+            'gameover'      : 'sound/hit3.wav'
+        };
 
         this.downloadAll = function(){
-            var _this = this;
             var src;
             
             //load images
             for(var img in this.imgs){
                 if(this.imgs.hasOwnProperty(img)){
                     src = this.imgs[img];
-                    
-                    //closure event
-                    (function(_this,img){
-                        _this.imgs[img] = new Image();
-                        _this.imgs[img].status = "loading";
-                        _this.imgs[img].name = img;
-                        _this.imgs[img].onload = function(){ assetLoaded.call(_this,'imgs',img); };
-                        _this.imgs[img].src = src;
-                    })(_this,img);
+                    this.imgs[img] = new Image();
+                    this.imgs[img].status = "loading";
+                    this.imgs[img].name = img;
+                    this.imgs[img].src = src;
+                }
+            }
+
+            //load sounds
+            for(var sound in this.sounds){
+                if(this.sounds.hasOwnProperty(sound)){
+                    src = this.sounds[sound];
+                    this.sounds[sound] = new Audio();
+                    this.sounds[sound].status = "loading";
+                    this.sounds[sound].volume = volume;
+                    this.sounds[sound].src = src;
                 }
             }
         };
 
         return{
             imgs:           this.imgs,
+            sounds:         this.sounds,
             totalAssets:    this.totalAssets,
             downloadAll:    this.downloadAll
         };
     })();
 
-    assetLoader.finished = function(){
-        //startGame();
-        background.reset();
-    };
 
     var background = (function(){
         var clouds = {};
@@ -363,21 +355,15 @@
         score = 0;
         difficulty = 0;
         enemies = [];
-
-        if(sound){
-            document.getElementById("sound_start").play();
-//            document.getElementById("sound_music").load();
-            document.getElementById("sound_music").play();
-        }
-
+        assetLoader.sounds.start.play();
+        assetLoader.sounds.music.play();
         animate();
     }
 
     function gameOver(){
-        if(sound){
-            document.getElementById("sound_gameover").play();
-            document.getElementById("sound_music").pause();
-        }
+        assetLoader.sounds.music.pause();
+        assetLoader.sounds.gameover.play();
+
         $("#score").html(score);
         $("#restart").show();
         play = false;
@@ -426,6 +412,25 @@
     $("#btnRestart").click(function(){
         $("#restart").hide();
         startGame();
+    });
+
+    $(".sound").click(function(){
+        var $this = $(this);
+        if($this.hasClass('sound-on')){
+            $this.removeClass('sound-on');
+            $this.addClass('sound-off');
+            volume = 0;
+        }else{
+            $this.removeClass('sound-off');
+            $this.addClass('sound-on');
+            volume = 1;
+        }
+
+        for(var sound in assetLoader.sounds){
+            if(assetLoader.sounds.hasOwnProperty(sound)){
+                assetLoader.sounds[sound].volume = volume;
+            }
+        }
     });
 
 }(jQuery));

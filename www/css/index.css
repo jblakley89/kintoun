@@ -91,3 +91,21 @@ body {
     margin:150px;
 }
 
+.sound{
+    position:absolute;
+    background-size:90%;
+    background-repeat:no-repeat;
+    height:30px;
+    width:30px;
+    top:10px;
+    left:10px;
+    z-index:2;
+}
+
+.sound-on{
+    background-image:url("../img/sound-on.png");
+}
+
+.sound-off{
+    background-image:url("../img/sound-off.png");
+}
