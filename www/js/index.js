@@ -334,7 +334,7 @@
         ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
         background.fillHole(player);
         //alert("player hole filled");
-        //background.fillHole(scoreBoard);
+        background.fillHole(scoreBoard);
         //alert("scoreBoard hole filled"); 
 
         for(var i in enemies){
@@ -413,7 +413,7 @@
     function animate() {
         if(play){
             requestAnimFrame( animate );
-            clearSpriteArea();
+            //clearSpriteArea();
             //alert("cleared sprites");
             if(debug){ ctx.beginPath(); }
             //background.draw();
