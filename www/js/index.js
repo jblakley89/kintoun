@@ -407,6 +407,7 @@
         if(play){
             requestAnimFrame( animate );
             clearSpriteArea();
+            alert("cleared sprites");
             if(debug){ ctx.beginPath(); }
             //background.draw();
 
