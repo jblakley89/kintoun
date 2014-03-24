@@ -14,6 +14,14 @@
     var sound = true;
     var debug = true;
     var volume = 1;
+
+    var scoreBoard = { posX: canvas.width - 150, 
+                                posY: 0,
+                                width: 150,
+                                height: 30,
+                                widthM: canvas.width * screenMultX,
+                                heightM: 30 * screenMultY
+    };
     
     var requestAnimFrame = (function(){
         return  window.requestAnimationFrame        ||
@@ -323,13 +331,7 @@
         ctx.clearRect(canvas.width - 150, 0, 150, 30);
         ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
         background.fillHole(player);
-        background.fillHole( { posX: canvas.width - 150, 
-                                posY: 0,
-                                width: 150,
-                                height: 30,
-                                widthM: canvas.width * screenMultX,
-                                heightM: 30 * screenMultY
-                            } ); 
+        background.fillHole(scoreBoard); 
 
         for(var i in enemies){
             var e = enemies[i];
