@@ -12,7 +12,7 @@
     var score,play,difficulty;
     var paused = false;
     var sound = true;
-    var debug = false;
+    var debug = true;
     var volume = 1;
     
     var requestAnimFrame = (function(){
@@ -58,9 +58,11 @@
                 if(this.sounds.hasOwnProperty(sound)){
                     src = this.sounds[sound];
                     if(typeof Media != "undefined"){
+                        if(debug){ alert("Media obj..."); }
                         this.sounds[sound] = new Media();
                         this.sounds[sound].src = src;
                     }else{
+                        if(debug){ alert("Audio obj..."); }
                         this.sounds[sound] = new Audio();
                         this.sounds[sound].src =  src;
                     }
@@ -405,7 +407,7 @@
         if(play){
             requestAnimFrame( animate );
             clearSpriteArea();
-           // ctx.beginPath();
+            if(debug){ ctx.beginPath(); }
             //background.draw();
 
             score++;
