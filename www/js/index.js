@@ -29,9 +29,15 @@
 
     var assetLoader = (function(){
         
+
         //image dictionary
         this.imgs = {
-            'clouds'        : 'img/combined_sky.jpg'
+            'clouds'        : 'img/combined_sky.jpg',
+            'player'        : 'img/player.png',
+            'pterodactyl'   : 'img/enemy_pterodactyl.png',
+            'tien'          : 'img/enemy_tien.png',
+            'piccolo'       : 'img/enemy_piccolo.png',
+            'missile'       : 'img/enemy_missile.png'
         };
 
         //sound dictionary
@@ -41,15 +47,23 @@
             'gameover'      : 'sound/hit3.wav'
         };
 
-        this.downloadAll = function(){
             var src;
+            var assetsLoaded = 0;
+            var assetsTotal = Object.keys(this.imgs).length + Object.keys(this.sounds).length;
+
+            function loaded() {
+                assetsLoaded++;
+            }
+        
+
             
             //load images
             for(var img in this.imgs){
                 if(this.imgs.hasOwnProperty(img)){
                     src = this.imgs[img];
                     this.imgs[img] = new Image();
-                    this.imgs[img].name = img;
+                     this.imgs[img].name = img;
+                    this.imgs[img].onload = function(){ loaded(); };
                     this.imgs[img].src = src;
                 }
             }
@@ -58,41 +72,28 @@
             for(var sound in this.sounds){
                 if(this.sounds.hasOwnProperty(sound)){
                     src = this.sounds[sound];
-                    if(typeof Media != "undefined"){
-                        if(debug){ alert("Media obj..."); }
-                        this.sounds[sound] = new Media();
-                        this.sounds[sound].src = src;
-                    }else{
-                        if(debug){ alert("Audio obj..."); }
-                        this.sounds[sound] = new Audio();
-                        this.sounds[sound].src =  src;
-                    }
+                    this.sounds[sound] = new Audio();
                     this.sounds[sound].volume = volume;
+                    this.sounds[sound].src =  src;
+                    loaded(); 
                 }
             }
-        };
+        
 
         return{
             imgs:           this.imgs,
             sounds:         this.sounds,
             totalAssets:    this.totalAssets,
-            downloadAll:    this.downloadAll
         };
     })();
 
 
     var background = (function(){
-        var clouds = {};
-        var cloudsImg = new Image();
-        cloudsImg.src = assetLoader.imgs.clouds;
+        var cloud = {};
 
         this.draw = function(){
-            
-            //pan background
-            clouds.x -= clouds.speed;
-            
-            //draw images in loop
-            ctx.drawImage(cloudsImg, clouds.x, clouds.y,canvas.width,canvas.height);
+            cloud.x -= cloud.speed;
+            ctx.drawImage(assetLoader.imgs.clouds, cloud.x, cloud.y,canvas.width,canvas.height);
            // ctx.drawImage(cloudsImg, clouds.x + canvas.width, clouds.y,
            //             canvas.width,canvas.height);
 
@@ -103,22 +104,42 @@
         };
 
         this.reset = function(){
-            clouds.x = 0;
-            clouds.y = 0;
-            clouds.speed = 0;
+            cloud.x = 0;
+            cloud.y = 0;
+            cloud.speed = 0;
         };
         
         this.fillHole = function(sprite){
-            ctx.drawImage(  cloudsImg,
-                            (sprite.posX / screenMultX),// - 1, 
-                            (sprite.posY / screenMultY),// - 1,
-                            sprite.width,//  + 2,
-                            sprite.height,// + 2,
-                            sprite.posX - screenMultX,
-                            sprite.posY - screenMultY,
-                            sprite.widthM  + (1 * screenMultX),
-                            sprite.heightM + (1 * screenMultX)
+            if(sprite.posX < canvas.width && sprite.posX > 0 &&
+                sprite.posY < canvas.height && sprite.posY > 0){
+            var x = sprite.posX / screenMultX;
+            var y = sprite.posY / screenMultY;
+            var wM;
+
+            if((sprite.widthM + x) > canvas.width){
+                wM = (canvas.width - x < 0) ? 0 : canvas.width - x;
+            }else{
+                wM = sprite.widthM;
+            }
+            
+            if((sprite.heightM + y) > canvas.height){
+                hM = (canvas.height - y < 0) ? 0 : canvas.height - y;
+            }else{
+                hM = sprite.widthM;
+            }
+
+            
+            ctx.drawImage(  assetLoader.imgs.clouds,
+                            x, 
+                            y,
+                            wM / screenMultX,
+                            hM / screenMultX,
+                            sprite.posX,
+                            sprite.posY,
+                            wM,
+                            hM
                          );
+            }
         };
 
         return {
@@ -128,16 +149,11 @@
         };
     })();
 
-    function SpriteSheet(path, frameWidth, frameHeight){
-        this.image = new Image();
+    function SpriteSheet(sheetImage, frameWidth, frameHeight){
+        this.image = sheetImage;
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
-
-        var self = this;
-        this.image.onload = function(){
-            self.framesPerRow = Math.floor(self.image.width / self.frameWidth);
-        };
-        this.image.src = path;
+        this.framesPerRow = Math.floor(this.image.width / this.frameWidth);
     }
 
     function Animation(spritesheet, frameSpeed, startFrame, endFrame){
@@ -196,7 +212,7 @@
                 e.height = 81;
                 e.speed  = 2 + difficulty;
                 e.sheet  = new SpriteSheet(
-                    "img/enemy_pterodactyl_3.png", 
+                    assetLoader.imgs.pterodactyl, 
                     e.width,
                     e.height
                 );
@@ -207,7 +223,7 @@
                 e.height = 76;
                 e.speed  = 3 + difficulty;
                 e.sheet  = new SpriteSheet(
-                    "img/enemy_piccolo.png", 
+                    assetLoader.imgs.piccolo, 
                     e.width,
                     e.height
                 );
@@ -218,7 +234,7 @@
                 e.height = 60;
                 e.speed  = 3 + difficulty;
                 e.sheet  = new SpriteSheet(
-                    "img/enemy_tien_2.png", 
+                    assetLoader.imgs.tien, 
                     e.width,
                     e.height
                 );
@@ -229,7 +245,7 @@
                 e.height = 30;
                 e.speed  = 5 + difficulty;
                 e.sheet  = new SpriteSheet(
-                    "img/enemy_missile_2.png", 
+                    assetLoader.imgs.missile, 
                     e.width,
                     e.height
                 );
@@ -256,8 +272,8 @@
         scoreBoard.posY = 0;
         scoreBoard.width = 150;
         scoreBoard.height = 30;
-        scoreBoard.widthM = scoreBoard.width * screenMultX;
-        scoreBoard.heightM = scoreBoard.height * screenMultY;
+        scoreBoard.widthM = scoreBoard.width;
+        scoreBoard.heightM = scoreBoard.height;
     }
 
     function createPlayer(){
@@ -272,7 +288,7 @@
         player.dX      = 0;
         player.dY      = 0;
         player.moves   = 0;
-        player.sheet   = new SpriteSheet("img/kinto_un_3.png", player.width, player.height);
+        player.sheet   = new SpriteSheet(assetLoader.imgs.player, player.width, player.height);
         player.anim    = new Animation(player.sheet, 10, 0, 2);
         updatePlayer();
     }
@@ -332,10 +348,10 @@
 
     function clearSpriteArea(){
         ctx.clearRect(canvas.width - 150, 0, 150, 30);
-        ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
+        //ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
         background.fillHole(player);
         //alert("player hole filled");
-        background.fillHole(scoreBoard);
+        //background.fillHole(scoreBoard);
         //alert("scoreBoard hole filled"); 
 
         for(var i in enemies){
@@ -443,8 +459,6 @@
         );
     }
 
-    assetLoader.downloadAll();
-    
     $("#btnStart").click(function(){
         $("#start").hide();
         startGame();
