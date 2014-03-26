@@ -349,7 +349,7 @@
 
         for(var i in enemies){
             var e = enemies[i];
-            background.fillHole(e);
+            //background.fillHole(e);
         }
     }
 
