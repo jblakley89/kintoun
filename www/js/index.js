@@ -122,11 +122,19 @@
         boundaries of the canvas
         */
         this.fillHole = function(sprite){
-            if(sprite.posX < canvas.width){
+            if( sprite.posX < canvas.width){
+                var x = (sprite.posX <= 0) ? 0 :
+                         sprite.posX / screenMultX;
+
+                var w = (sprite.width + x > assetLoader.imgs.clouds.width) ? 
+                             assetLoader.imgs.clouds.width - x : (sprite.posX < 0) ? 
+                             sprite.posX / screenMultX + sprite.width :
+                             sprite.width;
+
                 ctx.drawImage(  assetLoader.imgs.clouds,
-                                sprite.posX / screenMultX, 
+                                x, 
                                 sprite.posY / screenMultY,
-                                sprite.width,
+                                w,
                                 sprite.height,
                                 sprite.posX,
                                 sprite.posY,
