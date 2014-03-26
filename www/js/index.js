@@ -125,13 +125,13 @@
 
                 ctx.drawImage(  assetLoader.imgs.clouds,
                                 sprite.posX / screenMultX, 
-                                sprite.posY / screenMulty,
+                                sprite.posY / screenMultY,
                                 sprite.width,
                                 sprite.height,
                                 sprite.posX,
                                 sprite.posY,
                                 sprite.widthM,
-                                sprite.hightM
+                                sprite.heightM
                              );
 
             
