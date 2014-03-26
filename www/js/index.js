@@ -109,36 +109,67 @@
             cloud.speed = 0;
         };
         
+        /*
+        This method fills the background in the area the old sprite
+        image existed. The checks are to avoid drawing beyond the 
+        boundaries of the canvas
+        */
         this.fillHole = function(sprite){
-            if(sprite.posX < canvas.width && sprite.posX > 0 &&
-                sprite.posY < canvas.height && sprite.posY > 0){
-            var x = sprite.posX / screenMultX;
-            var y = sprite.posY / screenMultY;
-            var wM;
+            if( sprite.posX < canvas.width && sprite.posX >= 0 &&
+                sprite.posY < canvas.height && sprite.posY >= 0   ){
+                //Sprite TOP LEFT corner on canvas
 
-            if((sprite.widthM + x) > canvas.width){
-                wM = (canvas.width - x < 0) ? 0 : canvas.width - x;
-            }else{
-                wM = sprite.widthM;
-            }
-            
-            if((sprite.heightM + y) > canvas.height){
-                hM = (canvas.height - y < 0) ? 0 : canvas.height - y;
-            }else{
-                hM = sprite.widthM;
-            }
+                var x = sprite.posX / screenMultX;
+                var y = sprite.posY / screenMultY;
+                var wM;
+                var hM;
 
+                if((sprite.widthM + x + screenMultX)  > canvas.width){
+                    wM = (canvas.width - x < 0) ? 0 : canvas.width - x;
+                }else{
+                    wM = sprite.widthM + screenMultX;
+                }
             
-            ctx.drawImage(  assetLoader.imgs.clouds,
-                            x, 
-                            y,
-                            wM / screenMultX,
-                            hM / screenMultX,
-                            sprite.posX,
-                            sprite.posY,
-                            wM,
-                            hM
-                         );
+                if((sprite.heightM + sprite.posY + screenMultY) > canvas.height){
+                    hM = canvas.height - sprite.posY;
+                }else{
+                    hM = sprite.heightM + screenMultY;
+                }
+            
+                ctx.drawImage(  assetLoader.imgs.clouds,
+                                x, 
+                                y,
+                                wM / screenMultX,
+                                hM / screenMultY,
+                                sprite.posX,
+                                sprite.posY,
+                                wM,
+                                hM
+                             );
+
+            }else if( sprite.posX < 0 && (sprite.posX + sprite.widthM) > 0 ){
+                //Sprite TOP LEFT off canvas, but TOP RIGHT on
+                var x  = 0;
+                var y  = sprite.posY / screenMultY;
+                var wM = sprite.posX + sprite.widthM + screenMultX;
+                var hM;
+            
+                if((sprite.heightM + y + screenMultY) > canvas.height){
+                    hM = (canvas.height - y < 0) ? 0 : canvas.height - y;
+                }else{
+                    hM = sprite.heightM + screenMultY;
+                }
+
+                ctx.drawImage(  assetLoader.imgs.clouds,
+                                x, 
+                                y,
+                                wM / screenMultX,
+                                hM / screenMultY,
+                                0,
+                                sprite.posY,
+                                wM,
+                                hM
+                             );
             }
         };
 
@@ -253,14 +284,14 @@
                 break;
         }
 
-        //catches spawning below screen
-        if(e.posY > (canvas.height - e.height)){
-            e.posY = canvas.height - e.height;
-        }
-
         //scales size
         e.widthM  = e.width * screenMultX;
         e.heightM = e.height * screenMultY;
+
+        //catches spawning below screen
+        if(e.posY + e.heightM + screenMultY > canvas.height){
+            e.posY = canvas.height - e.heightM - screenMultY;
+        }
 
         calculateMovement(e, (-e.widthM - 5), e.posY);
 
@@ -297,15 +328,21 @@
         player.anim.update();
 
         if(player.moves > 0){
-            player.posX += player.dX;
-            player.posY += player.dY;
+            player.posX = (player.posX + player.dX < 1) ? 1 : player.posX + player.dX;
+            player.posY = (player.posY + player.dY < 1) ? 1 : 
+                          (player.posY + player.dY + player.heightM > canvas.height) ?
+                               canvas.height - player.heightM - 1 : player.posY + player.dY;
             player.moves--;
         } 
         player.anim.draw(
-            (player.posX < (canvas.width - player.width)) ? 
-                player.posX : (canvas.width - player.width), 
-            (player.posY < (canvas.height - player.height)) ?
-                player.posY : (canvas.height - player.height)
+            //keeps player within canvas x
+            (player.posX < (canvas.width  - player.widthM)  && player.posX > 0) ? 
+                player.posX : (player.posX < 0) ? 
+                              0 : (canvas.width - player.widthM), 
+            //keeps player within canvas y
+            (player.posY < (canvas.height - player.heightM) && player.posY > 0) ?
+                player.posY : (player.posY < 0) ?
+                              0 : (canvas.height - player.heightM)
         );
         
 
@@ -336,9 +373,15 @@
             enemies[i].anim.update();
             if(enemies[i].moves > 0){
                 enemies[i].posX += enemies[i].dX;
-                enemies[i].posY += enemies[i].dY;
+                //enemies[i].posY += enemies[i].dY;
                 enemies[i].moves--;
-                enemies[i].anim.draw(enemies[i].posX, enemies[i].posY);
+                enemies[i].anim.draw(
+                        enemies[i].posX, 
+                        //keeps player within canvas y
+                        (enemies[i].posY < (canvas.height - enemies[i].heightM) && enemies[i].posY > 0) ?
+                        enemies[i].posY : (enemies[i].posY < 0) ?
+                                      0 : (canvas.height - enemies[i].heightM)
+                                    );
                 collisionCheck(enemies[i]);
             }else{
                 enemies.splice(i,1);
@@ -347,17 +390,12 @@
     }
 
     function clearSpriteArea(){
-        ctx.clearRect(canvas.width - 150, 0, 150, 30);
-        //ctx.clearRect(player.posX, player.posY, player.widthM, player.heightM);
         background.fillHole(player);
-        //alert("player hole filled");
-        //background.fillHole(scoreBoard);
-        //alert("scoreBoard hole filled"); 
+        background.fillHole(scoreBoard);
 
         for(var i in enemies){
             var e = enemies[i];
-            ctx.clearRect(e.posX, e.posY, e.widthM, e.heightM);
-            //background.fillHole(e);
+            background.fillHole(e);
         }
     }
 
@@ -454,8 +492,8 @@
     canvas.onmousedown = function(e){
         calculateMovement(
             player, 
-            e.pageX - (player.width/2), 
-            e.pageY - (player.height/2)
+            e.pageX - (player.widthM  / 2), 
+            e.pageY - (player.heightM / 2)
         );
     }
 
