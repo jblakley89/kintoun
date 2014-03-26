@@ -19,8 +19,8 @@
         posY        : 0,
         width       : 150,
         height      : 30,
-        widthM      : this.width,
-        heightM     : this.height
+        widthM      : 150,
+        heightM     : 30
     };
     
     var requestAnimFrame = (function(){
