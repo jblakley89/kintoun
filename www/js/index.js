@@ -422,7 +422,6 @@
         if(play){
             requestAnimFrame( animate );
             clearSpriteArea();
-            alert('cleared');
             if(debug){ ctx.beginPath(); }
             //background.draw();
 
@@ -433,16 +432,12 @@
        
             //Update chars/sprites
             updatePlayer();
-            alert('player updated');
             updateEnemies(); 
-            alert('enemies updated');
 
             //Adds enemies
             if(score % (60 - (8*difficulty)) == 1){ //TODO make scale with score
                 addEnemy();
-                alert('added enemy');
             }
-            alert('animate done');
         }
     }
 
