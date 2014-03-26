@@ -421,9 +421,9 @@
     function animate() {
         if(play){
             requestAnimFrame( animate );
-            //clearSpriteArea();
+            clearSpriteArea();
             if(debug){ ctx.beginPath(); }
-            background.draw();
+            //background.draw();
 
             score++;
             ctx.fillText("Score: " + score,canvas.width-150,30);
