@@ -49,9 +49,9 @@
 
         //sound dictionary
         this.sounds = {
-            'music'         : 'sound/music.mp3',
-            'start'         : 'sound/kintoun.wav',
-            'gameover'      : 'sound/hit3.wav'
+            'music'         : 'res/raw/music.mp3',
+            'start'         : 'res/raw/kintoun.wav',
+            'gameover'      : 'res/raw/hit3.wav'
         };
 
             var src;
