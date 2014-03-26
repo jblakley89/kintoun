@@ -122,7 +122,7 @@
         boundaries of the canvas
         */
         this.fillHole = function(sprite){
-            if( sprite.posX < canvas.width){
+            if( sprite.posX < canvas.width && (sprite.posX + sprite.widthM) > 0){
                 var x = (sprite.posX <= 0) ? 0 :
                          sprite.posX / screenMultX;
 
