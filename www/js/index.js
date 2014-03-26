@@ -440,7 +440,9 @@
             //Adds enemies
             if(score % (60 - (8*difficulty)) == 1){ //TODO make scale with score
                 addEnemy();
+                alert('added enemy');
             }
+            alert('animate done');
         }
     }
 
