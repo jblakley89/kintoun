@@ -14,7 +14,14 @@
     var sound = true;
     var debug = false;
     var volume = 1;
-    var scoreBoard = {};
+    var scoreBoard = {
+        posX        : canvas.width - 150,
+        posY        : 0,
+        width       : 150,
+        height      : 30,
+        widthM      : this.width,
+        heightM     : this.height
+    };
     
     var requestAnimFrame = (function(){
         return  window.requestAnimationFrame        ||
@@ -23,7 +30,7 @@
                 window.oRequestAnimationFrame       ||
                 window.msRequestAnimationFrame      ||
                 function(callback, element){
-                    window.setTimeout(callback, 1000 / 60);
+                    window.setTimeout(callback, 1000 / 15);
                 };
     })();
 
@@ -115,62 +122,19 @@
         boundaries of the canvas
         */
         this.fillHole = function(sprite){
-            if( sprite.posX < canvas.width && sprite.posX >= 0 &&
-                sprite.posY < canvas.height && sprite.posY >= 0   ){
-                //Sprite TOP LEFT corner on canvas
 
-                var x = sprite.posX / screenMultX;
-                var y = sprite.posY / screenMultY;
-                var wM;
-                var hM;
-
-                if((sprite.widthM + x + screenMultX)  > canvas.width){
-                    wM = (canvas.width - x < 0) ? 0 : canvas.width - x;
-                }else{
-                    wM = sprite.widthM + screenMultX;
-                }
-            
-                if((sprite.heightM + sprite.posY + screenMultY) > canvas.height){
-                    hM = canvas.height - sprite.posY;
-                }else{
-                    hM = sprite.heightM + screenMultY;
-                }
-            
                 ctx.drawImage(  assetLoader.imgs.clouds,
-                                x, 
-                                y,
-                                wM / screenMultX,
-                                hM / screenMultY,
+                                sprite.posX / screenMultX, 
+                                sprite.posY / screenMulty,
+                                sprite.width,
+                                sprite.height,
                                 sprite.posX,
                                 sprite.posY,
-                                wM,
-                                hM
+                                sprite.widthM,
+                                sprite.hightM
                              );
 
-            }else if( sprite.posX < 0 && (sprite.posX + sprite.widthM) > 0 ){
-                //Sprite TOP LEFT off canvas, but TOP RIGHT on
-                var x  = 0;
-                var y  = sprite.posY / screenMultY;
-                var wM = sprite.posX + sprite.widthM + screenMultX;
-                var hM;
             
-                if((sprite.heightM + y + screenMultY) > canvas.height){
-                    hM = (canvas.height - y < 0) ? 0 : canvas.height - y;
-                }else{
-                    hM = sprite.heightM + screenMultY;
-                }
-
-                ctx.drawImage(  assetLoader.imgs.clouds,
-                                x, 
-                                y,
-                                wM / screenMultX,
-                                hM / screenMultY,
-                                0,
-                                sprite.posY,
-                                wM,
-                                hM
-                             );
-            }
         };
 
         return {
@@ -298,15 +262,6 @@
         return e;
     }
 
-    function createScoreBoard(){
-        scoreBoard.posX = canvas.width - 150;
-        scoreBoard.posY = 0;
-        scoreBoard.width = 150;
-        scoreBoard.height = 30;
-        scoreBoard.widthM = scoreBoard.width;
-        scoreBoard.heightM = scoreBoard.height;
-    }
-
     function createPlayer(){
         // setup the player
         player.width   = 45;
@@ -373,7 +328,6 @@
             enemies[i].anim.update();
             if(enemies[i].moves > 0){
                 enemies[i].posX += enemies[i].dX;
-                //enemies[i].posY += enemies[i].dY;
                 enemies[i].moves--;
                 enemies[i].anim.draw(
                         enemies[i].posX, 
@@ -442,7 +396,6 @@
 
     function startGame() {
         createPlayer();
-        createScoreBoard();
         background.reset();
         play = true;
         score = 0;
@@ -468,10 +421,9 @@
     function animate() {
         if(play){
             requestAnimFrame( animate );
-            clearSpriteArea();
-            //alert("cleared sprites");
+            //clearSpriteArea();
             if(debug){ ctx.beginPath(); }
-            //background.draw();
+            background.draw();
 
             score++;
             ctx.fillText("Score: " + score,canvas.width-150,30);
