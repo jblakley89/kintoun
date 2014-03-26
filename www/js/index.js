@@ -122,7 +122,7 @@
         boundaries of the canvas
         */
         this.fillHole = function(sprite){
-
+            if(sprite.posX < canvas.width){
                 ctx.drawImage(  assetLoader.imgs.clouds,
                                 sprite.posX / screenMultX, 
                                 sprite.posY / screenMultY,
@@ -133,7 +133,7 @@
                                 sprite.widthM,
                                 sprite.heightM
                              );
-
+}
             
         };
 
@@ -349,7 +349,7 @@
 
         for(var i in enemies){
             var e = enemies[i];
-            //background.fillHole(e);
+            background.fillHole(e);
         }
     }
 
