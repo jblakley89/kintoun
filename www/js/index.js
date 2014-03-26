@@ -421,7 +421,7 @@
     function animate() {
         if(play){
             requestAnimFrame( animate );
-            clearSpriteArea();
+            //clearSpriteArea();
             if(debug){ ctx.beginPath(); }
             //background.draw();
 
