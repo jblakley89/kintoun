@@ -443,7 +443,7 @@
             updateEnemies(); 
 
             //Adds enemies
-            if(score % (60 - (8*difficulty)) == 1){ //TODO make scale with score
+            if(score % (60 - (8*difficulty)) == 1){ 
                 addEnemy();
             }
         }
@@ -465,6 +465,10 @@
     $("#btnRestart").click(function(){
         $("#restart").hide();
         startGame();
+    });
+
+    $("#btnExit").click(function(){
+        navigator.app.exitApp();
     });
 
     $(".sound").click(function(){
