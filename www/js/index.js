@@ -467,7 +467,7 @@
         startGame();
     });
 
-    $("#btnExit").click(function(){
+    $(".btnExit").click(function(){
         navigator.app.exitApp();
     });
 
