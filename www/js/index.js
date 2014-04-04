@@ -79,9 +79,12 @@
             for(var sound in this.sounds){
                 if(this.sounds.hasOwnProperty(sound)){
                     src = this.sounds[sound];
-                    this.sounds[sound] = new Audio();
+                    this.sounds[sound] = new Media(src);
+                    if(this.sound[sound] == null){
+                        this.sounds[sound] = new Audio();
+                        this.sounds[sound].src =  src;
+                    }
                     this.sounds[sound].volume = volume;
-                    this.sounds[sound].src =  src;
                     loaded(); 
                 }
             }
