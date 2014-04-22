@@ -30,7 +30,7 @@
                 window.oRequestAnimationFrame       ||
                 window.msRequestAnimationFrame      ||
                 function(callback, element){
-                    window.setTimeout(callback, 1000 / 15);
+                    window.setTimeout(callback, 1000 / 30);
                 };
     })();
 
