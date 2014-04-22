@@ -1,11 +1,11 @@
 (function($){
     var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    ctx.font = "15pt Arial";
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     var screenMultX = canvas.width / 800;
     var screenMultY = canvas.height / 480;
-    var ctx = canvas.getContext("2d");
-    ctx.font = "15pt Arial";
     var player = {};
     var enemies = [];
     var items = [];
@@ -54,41 +54,38 @@
             'gameover'      : 'res/raw/hit3.wav'
         };
 
-            var src;
-            var assetsLoaded = 0;
-            var assetsTotal = Object.keys(this.imgs).length + Object.keys(this.sounds).length;
+        var src;
+        var assetsLoaded = 0;
+        var assetsTotal = Object.keys(this.imgs).length + Object.keys(this.sounds).length;
 
-            function loaded() {
-                assetsLoaded++;
-            }
+        function loaded() {
+            //TODO: Write verification logic
+            assetsLoaded++;
+        }
         
 
             
-            //load images
-            for(var img in this.imgs){
-                if(this.imgs.hasOwnProperty(img)){
-                    src = this.imgs[img];
-                    this.imgs[img] = new Image();
-                     this.imgs[img].name = img;
-                    this.imgs[img].onload = function(){ loaded(); };
-                    this.imgs[img].src = src;
-                }
+        //load images
+        for(var img in this.imgs){
+            if(this.imgs.hasOwnProperty(img)){
+                src = this.imgs[img];
+                this.imgs[img] = new Image();
+                this.imgs[img].name = img;
+                this.imgs[img].onload = function(){ loaded(); };
+                this.imgs[img].src = src;
             }
+        }
 
-            //load sounds
-            for(var sound in this.sounds){
-                if(this.sounds.hasOwnProperty(sound)){
-                    src = this.sounds[sound];
-                    this.sounds[sound] = new Media(src);
-                    if(this.sound[sound] == null){
-                        this.sounds[sound] = new Audio();
-                        this.sounds[sound].src =  src;
-                    }
-                    this.sounds[sound].volume = volume;
-                    loaded(); 
-                }
+        //load sounds
+        for(var sound in this.sounds){
+            if(this.sounds.hasOwnProperty(sound)){
+                src = this.sounds[sound];
+                this.sounds[sound] = new Audio();
+                this.sounds[sound].src =  src;
+                this.sounds[sound].volume = volume;
+                loaded(); 
             }
-        
+        }
 
         return{
             imgs:           this.imgs,
@@ -96,7 +93,6 @@
             totalAssets:    this.totalAssets,
         };
     })();
-
 
     var background = (function(){
         var cloud = {};
@@ -144,8 +140,7 @@
                                 sprite.widthM,
                                 sprite.heightM
                              );
-}
-            
+            }
         };
 
         return {
